@@ -7,22 +7,18 @@ pipeline {
                 checkout scm
             }
         }
-        
-        stage('Build') {
+        stage('Build and Push Docker Image') {
             steps {
-                sh 'docker build -t your-image-name .'
+                script {
+                    def imageName = "my-docker-image:latest"
+                    sh "docker build -t $imageName ."
+                    sh "docker push $imageName"
+                }
             }
         }
-        
-        stage('Test') {
-            steps {
-                // Add your testing steps here
-            }
-        }
-        
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 8080:80 your-image-name'
+                sh "docker run -d -p 8080:80 my-docker-image:latest"
             }
         }
     }
