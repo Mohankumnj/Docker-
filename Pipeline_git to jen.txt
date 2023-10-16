@@ -7,18 +7,22 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Build and Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
                     def imageName = "my-docker-image:latest"
                     sh "docker build -t $imageName ."
-                    sh "docker push $imageName"
                 }
             }
         }
-        stage('Deploy') {
+        stage('Run Ubuntu Container') {
             steps {
-                sh "docker run -d -p 8080:80 my-docker-image:latest"
+                sh "docker run -d --name my-ubuntu-container ubuntu:latest"
+            }
+        }
+        stage('Deploy to Ubuntu Container') {
+            steps {
+                sh "docker exec my-ubuntu-container docker run -d -p 8080:80 my-docker-image:latest"
             }
         }
     }
