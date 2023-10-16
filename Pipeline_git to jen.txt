@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'docker build -t your-image-name .'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                // Add your testing steps here
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh 'docker run -d -p 8080:80 your-image-name'
+            }
+        }
+    }
+}
