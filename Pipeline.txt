@@ -1,28 +1,19 @@
 pipeline {
     agent any
-    
+
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        stage('Build Docker Image') {
+        stage('Build Nginx Docker Image') {
             steps {
                 script {
-                    def imageName = "my-docker-image:latest"
-                    sh "docker build -t $imageName ."
+                    // Build the Docker image
+                    def customDockerImage = docker.build('me-nginx', '.')
+
+                    // Push the image to a Docker registry (if needed)
+                    // customDockerImage.push()
+
+                    // Run a container with the built image
+                    customDockerImage.run('-p 8080:80 -d')
                 }
-            }
-        }
-        stage('Run Ubuntu Container') {
-            steps {
-                sh "docker run -d --name my-ubuntu-container ubuntu:latest"
-            }
-        }
-        stage('Deploy to Ubuntu Container') {
-            steps {
-                sh "docker exec my-ubuntu-container docker run -d -p 8080:80 my-docker-image:latest"
             }
         }
     }
